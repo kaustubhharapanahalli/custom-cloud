@@ -62,11 +62,8 @@ def handle(req):
     known_faces = list(encodings_dict["encoding"])
     known_names = list(encodings_dict["name"])
 
-    # print(known_faces)
-    print(type(known_names))
 
     test_image_name = req.split(".")[0]
-    print(os.listdir("/tmp/"))
     # Extract frames from the video using ffmpeg
     os.system(
         f"ffmpeg -i {video_file_path} -r 1 /tmp/{test_image_name}-%3d.jpeg"
@@ -79,13 +76,10 @@ def handle(req):
         if os.path.isfile(image_path):
             # Load the image
             unknown_image = face_recognition.load_image_file(image_path)
-            print("unknown image alright")
             face_encodings = face_recognition.face_encodings(unknown_image)[0]
-            print("unknown image alright")
             matches = face_recognition.compare_faces(
                 known_faces, face_encodings
             )
-            print(matches)
             name = "Unknown"
 
             # If there is a match, use the known face's name
@@ -99,7 +93,6 @@ def handle(req):
                     result["major"],
                     result["year"],
                 ]
-                print(output)
 
                 output_path = output_file_name + ".csv"
                 with open("/tmp/" + output_path, mode="w") as file:
@@ -112,4 +105,4 @@ def handle(req):
                 os.remove("/tmp/" + output_path)
                 break
     
-    return f"{req}: {output}"
+    return {req: output}
